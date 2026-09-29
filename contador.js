@@ -10,33 +10,36 @@
     // URL DEL WEBHOOK DE MAKE
     const WEBHOOK_URL = "https://hook.us2.make.com/wl18cknohx6537wiq5x6m1kjjp3k5egb";
 
-
     // =====================================================
-    // OBTENER EL ID DE LA PÁGINA
+    // OBTENER EL SCRIPT QUE ESTÁ EJECUTÁNDOSE
     // =====================================================
 
-    const scriptActual =
-        document.currentScript;
+    const scriptActual = document.currentScript;
 
     if (!scriptActual) {
         return;
     }
 
+
+    // =====================================================
+    // IDENTIFICADOR DE LA PÁGINA
+    // =====================================================
+
     const idPagina =
         scriptActual.getAttribute("data-id");
 
-
-    // Si no existe identificador, no hacemos nada
     if (!idPagina) {
+
         console.warn(
-            "Contá tus visitas: falta data-id"
+            "Chispas Cuenta: falta el atributo data-id"
         );
+
         return;
     }
 
 
     // =====================================================
-    // CREAR / RECUPERAR IDENTIFICADOR DEL VISITANTE
+    // IDENTIFICAR AL VISITANTE
     // =====================================================
 
     let visitante;
@@ -45,7 +48,7 @@
 
         visitante =
             localStorage.getItem(
-                "conta_visitas_visitante"
+                "chispas_cuenta_visitante"
             );
 
         if (!visitante) {
@@ -55,15 +58,12 @@
                 crypto.randomUUID();
 
             localStorage.setItem(
-                "conta_visitas_visitante",
+                "chispas_cuenta_visitante",
                 visitante
             );
         }
 
     } catch (error) {
-
-        // Si el navegador bloquea localStorage,
-        // generamos igualmente un identificador.
 
         visitante =
             "v-" +
@@ -76,7 +76,7 @@
 
 
     // =====================================================
-    // IDENTIFICADOR ÚNICO DE LA VISITA
+    // ID ÚNICO DE LA VISITA
     // =====================================================
 
     const idVisita =
@@ -89,39 +89,24 @@
 
 
     // =====================================================
-    // FECHA Y HORA
+    // DATOS DE LA VISITA
     // =====================================================
 
     const fechaHora =
         new Date().toISOString();
 
-
-    // =====================================================
-    // PÁGINA VISITADA
-    // =====================================================
-
     const pagina =
         window.location.href;
 
-
-    // =====================================================
-    // DE DÓNDE PROVIENE EL VISITANTE
-    // =====================================================
-
     const referer =
         document.referrer || "directo";
-
-
-    // =====================================================
-    // NAVEGADOR / DISPOSITIVO
-    // =====================================================
 
     const userAgent =
         navigator.userAgent;
 
 
     // =====================================================
-    // DATOS PARA MAKE
+    // DATOS QUE SE ENVÍAN A MAKE
     // =====================================================
 
     const datos = {
@@ -144,7 +129,7 @@
 
 
     // =====================================================
-    // ENVIAR AL WEBHOOK
+    // ENVIAR VISITA A MAKE
     // =====================================================
 
     fetch(WEBHOOK_URL, {
@@ -159,19 +144,133 @@
 
         keepalive: true
 
-    })
-
-    .catch(function (error) {
-
-        // El contador es invisible para el visitante.
-        // Si falla el envío, no interrumpimos la página.
+    }).catch(function (error) {
 
         console.warn(
-            "Contá tus visitas: no se pudo registrar la visita.",
+            "Chispas Cuenta: no se pudo registrar la visita.",
             error
         );
 
     });
+
+
+    // =====================================================
+    // LOGOTIPO CHISPAS CUENTA
+    // =====================================================
+
+    const logo = document.createElement("div");
+
+    logo.innerHTML = `
+
+        <svg
+            width="135"
+            height="38"
+            viewBox="0 0 135 38"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-label="Chispas Cuenta"
+        >
+
+            <!-- gráfica -->
+
+            <polyline
+                points="4,29 18,24 31,26 45,17 58,20 73,8"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+            />
+
+            <!-- puntos de la gráfica -->
+
+            <circle cx="18" cy="24" r="2"
+                    fill="currentColor"/>
+
+            <circle cx="45" cy="17" r="2"
+                    fill="currentColor"/>
+
+            <circle cx="73" cy="8" r="2.5"
+                    fill="currentColor"/>
+
+
+            <!-- chispas -->
+
+            <text
+                x="8"
+                y="10"
+                font-size="9"
+            >✦</text>
+
+            <text
+                x="35"
+                y="9"
+                font-size="7"
+            >✦</text>
+
+            <text
+                x="67"
+                y="27"
+                font-size="8"
+            >✦</text>
+
+
+            <!-- nombre -->
+
+            <text
+                x="82"
+                y="16"
+                font-family="Arial, sans-serif"
+                font-size="10"
+                font-weight="bold"
+                fill="currentColor"
+            >
+                CHISPAS
+            </text>
+
+            <text
+                x="82"
+                y="28"
+                font-family="Arial, sans-serif"
+                font-size="10"
+                fill="currentColor"
+            >
+                CUENTA
+            </text>
+
+        </svg>
+
+    `;
+
+
+    // =====================================================
+    // ESTILO DEL LOGO
+    // =====================================================
+
+    logo.style.position = "fixed";
+    logo.style.bottom = "10px";
+    logo.style.right = "10px";
+    logo.style.zIndex = "999999";
+
+    logo.style.color = "#777";
+
+    logo.style.opacity = "0.65";
+
+    logo.style.fontFamily =
+        "Arial, sans-serif";
+
+    logo.style.pointerEvents =
+        "none";
+
+
+    // =====================================================
+    // AGREGAR LOGO A LA PÁGINA
+    // =====================================================
+
+    document.body.appendChild(logo);
+
+
+})();
+
 
 
 })();
